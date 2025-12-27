@@ -11,6 +11,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(bottomNavigationBar: const MainLayout());
+    return const Scaffold(
+      body: MainLayout(),
+    );
   }
 }
