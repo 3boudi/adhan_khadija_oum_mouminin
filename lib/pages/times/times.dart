@@ -45,72 +45,76 @@ class _TimesState extends State<Times> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: _prayerData,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: ColorFiltered(
-                colorFilter: const ColorFilter.mode(
-                    Color.fromARGB(255, 24, 84, 0), BlendMode.srcATop),
-                child: Lottie.asset(
-                  'assets/lottie/loading.json',
-                  width: 150,
-                  height: 150,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'خطأ: ${snapshot.error}',
-                style: ArabicTextStyle(arabicFont: ArabicFont.dinNextLTArabic),
-              ),
-            );
-          }
-
-          final data = snapshot.data!;
-          final allPrayerTimes =
-              data['allPrayerTimes'] as Map<String, DateTime>;
-          final nextPrayer = data['nextPrayer'] as Map<String, dynamic>;
-
-          return Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'أوقات الصلاة',
-                  style: ArabicTextStyle(
-                    arabicFont: ArabicFont.dinNextLTArabic,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 24, 84, 0),
+      body: Directionality(
+        textDirection: TextDirection.rtl, // <-- This makes everything RTL
+        child: FutureBuilder<Map<String, dynamic>>(
+          future: _prayerData,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: ColorFiltered(
+                  colorFilter: const ColorFilter.mode(
+                      Color.fromARGB(255, 24, 84, 0), BlendMode.srcATop),
+                  child: Lottie.asset(
+                    'assets/lottie/loading.json',
+                    width: 150,
+                    height: 150,
+                    fit: BoxFit.cover,
                   ),
                 ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: ListView(
-                    children: allPrayerTimes.entries.map((entry) {
-                      final prayerTime = entry.value;
-                      final formattedTime =
-                          '${prayerTime.hour}:${prayerTime.minute.toString().padLeft(2, '0')}';
+              );
+            }
 
-                      return PrayerTimeCard(
-                        prayerName: entry.key,
-                        prayerTime: formattedTime,
-                        isCurrent: entry.key == nextPrayer['name'],
-                      );
-                    }).toList(),
-                  ),
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'خطأ: ${snapshot.error}',
+                  style:
+                      ArabicTextStyle(arabicFont: ArabicFont.dinNextLTArabic),
                 ),
-              ],
-            ),
-          );
-        },
+              );
+            }
+
+            final data = snapshot.data!;
+            final allPrayerTimes =
+                data['allPrayerTimes'] as Map<String, DateTime>;
+            final nextPrayer = data['nextPrayer'] as Map<String, dynamic>;
+
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start, // still okay
+                children: [
+                  Text(
+                    'أوقات الصلاة',
+                    style: ArabicTextStyle(
+                      arabicFont: ArabicFont.dinNextLTArabic,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 24, 84, 0),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: ListView(
+                      children: allPrayerTimes.entries.map((entry) {
+                        final prayerTime = entry.value;
+                        final formattedTime =
+                            '${prayerTime.hour}:${prayerTime.minute.toString().padLeft(2, '0')}';
+
+                        return PrayerTimeCard(
+                          prayerName: entry.key,
+                          prayerTime: formattedTime,
+                          isCurrent: entry.key == nextPrayer['name'],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
