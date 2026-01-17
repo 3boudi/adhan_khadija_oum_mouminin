@@ -396,7 +396,7 @@ class NotificationService {
       importance: Importance.max,
       priority: Priority.high,
       sound: const RawResourceAndroidNotificationSound('adhan'),
-      playSound: true, // This will play the sound from notification
+      playSound: true,
       enableVibration: true,
       vibrationPattern: Int64List.fromList([0, 1000, 500, 1000]),
       color: const Color.fromARGB(255, 0, 78, 3),

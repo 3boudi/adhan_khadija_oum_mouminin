@@ -34,10 +34,14 @@ android {
     buildTypes {
             
         release {
-        signingConfig signingConfigs.release
-        shrinkResources true  // remove unused resources
-        minifyEnabled true    // enable code shrinking
-    }
+            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = true // enable code shrinking
+            isShrinkResources = false  // DISABLED: Keep raw resources like adhan.mp3
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
         
     }
 }
