@@ -1,4 +1,4 @@
-package com.example.adhan_khadija
+package com.amine.adhan_khadija
 
 import android.os.Build
 import android.os.Bundle

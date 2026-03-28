@@ -1,5 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import '../utils/app_exceptions.dart';
 
 class LocationService {
   Future<Position> getCurrentLocation() async {
@@ -11,7 +12,7 @@ class LocationService {
     if (!serviceEnabled) {
       // Prompt user to enable location services
       await Geolocator.openLocationSettings();
-      throw Exception('يرجى تفعيل خدمات الموقع من الإعدادات');
+      throw LocationDisabledException();
     }
 
     // Check location permission
@@ -19,14 +20,14 @@ class LocationService {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        throw Exception('يرجى السماح بالوصول إلى الموقع الجغرافي');
+        throw LocationPermissionDeniedException();
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
       // Open app settings for user to manually enable permission
       await Geolocator.openAppSettings();
-      throw Exception('يرجى تفعيل إذن الموقع من إعدادات التطبيق');
+      throw LocationPermissionPermanentlyDeniedException();
     }
 
     // Get current position
@@ -38,7 +39,8 @@ class LocationService {
         ),
       );
     } catch (e) {
-      throw Exception('فشل في الحصول على الموقع الحالي: ${e.toString()}');
+      throw GeneralException(
+          'فشل في الحصول على الموقع الحالي: ${e.toString()}');
     }
   }
 
@@ -50,7 +52,7 @@ class LocationService {
         return place.locality ??
             place.subAdministrativeArea ??
             place.administrativeArea ??
-            "Unknown";
+            "موقع غير محدد";
       }
       return 'موقع غير معروف';
     } catch (e) {

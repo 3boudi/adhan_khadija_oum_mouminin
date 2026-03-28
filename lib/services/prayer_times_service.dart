@@ -2,6 +2,7 @@ import 'package:adhan/adhan.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import '../utils/app_exceptions.dart';
 import 'notification_service.dart';
 import 'connectivity_service.dart';
 
@@ -125,7 +126,7 @@ class PrayerTimesService {
       }
 
       // If we reach here, no valid cache exists and we're offline
-      throw Exception('لا يوجد اتصال بالإنترنت ولا توجد بيانات محفوظة مسبقاً');
+      throw DataNotFoundException();
     }
   }
 
