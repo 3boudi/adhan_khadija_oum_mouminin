@@ -4,6 +4,7 @@ import 'package:animated_analog_clock/animated_analog_clock.dart';
 import '../../services/location_service.dart';
 import '../../services/prayer_times_service.dart';
 import '../../widgets/next_prayer_widget.dart';
+import '../../widgets/error_retry_widget.dart';
 import 'package:lottie/lottie.dart';
 
 class LocationTime extends StatefulWidget {
@@ -74,46 +75,13 @@ class _LocationTimeState extends State<LocationTime> {
         }
 
         if (snapshot.hasError) {
-          return Center(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      color: Color.fromARGB(255, 24, 84, 0),
-                      size: 60,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      '${snapshot.error}',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.red,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _prayerData = _getPrayerData();
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 24, 84, 0),
-                      ),
-                      child: const Text(
-                        'إعادة المحاولة',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          return ErrorRetryWidget(
+            error: snapshot.error,
+            onRetry: () {
+              setState(() {
+                _prayerData = _getPrayerData();
+              });
+            },
           );
         }
 

@@ -3,6 +3,7 @@ import 'package:arabic_font/arabic_font.dart';
 import '../../services/location_service.dart';
 import '../../services/prayer_times_service.dart';
 import '../../widgets/prayer_time_card.dart';
+import '../../widgets/error_retry_widget.dart';
 import 'package:lottie/lottie.dart';
 
 class Times extends StatefulWidget {
@@ -48,7 +49,7 @@ class _TimesState extends State<Times> {
         'lastUpdate': initResult['lastUpdate'],
       };
     } catch (e) {
-      throw Exception('فشل في الحصول على البيانات: $e');
+      rethrow;
     }
   }
 
@@ -76,48 +77,13 @@ class _TimesState extends State<Times> {
             }
 
             if (snapshot.hasError) {
-              return Center(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          color: Color.fromARGB(255, 24, 84, 0),
-                          size: 60,
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          'خطأ: ${snapshot.error}',
-                          textAlign: TextAlign.center,
-                          style: ArabicTextStyle(
-                            arabicFont: ArabicFont.dinNextLTArabic,
-                            fontSize: 16,
-                            color: Colors.red,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _prayerData = _getPrayerData();
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color.fromARGB(255, 24, 84, 0),
-                          ),
-                          child: const Text(
-                            'إعادة المحاولة',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              return ErrorRetryWidget(
+                error: snapshot.error,
+                onRetry: () {
+                  setState(() {
+                    _prayerData = _getPrayerData();
+                  });
+                },
               );
             }
 
